@@ -26,6 +26,9 @@ namespace DCS_AfterburnerDetentCalculator
             // This is not tested properly yet, pretty much work in progress
             int hardDetentValue = 754;
 
+            // If true, prints the value with a dot, otherwise with a comma (for pasting programs such as JoyPro)
+            bool printForDcsConfigLuaFile = false;
+
             // #############################################
 
             // Calculate a percentage out of those 
@@ -117,11 +120,26 @@ namespace DCS_AfterburnerDetentCalculator
                     }
                 }
 
-                // Prints the results, place them to the DCS config or JoyPro etc.
-                Console.WriteLine(kvp.Key.ToString() + "'s curve: ");
-                for (int i = 0; i < userCurve.Length; i++)
+                // Prints the results, place them to program such as JoyPro etc (printed with commas)
+                if (!printForDcsConfigLuaFile)
                 {
-                    Console.WriteLine(userCurve[i]);
+                    Console.WriteLine(kvp.Key.ToString() + "'s curve with commas: ");
+                    for (int i = 0; i < userCurve.Length; i++)
+                    {
+                        Console.WriteLine(userCurve[i]);
+                    }
+                }
+                // Place in dcs config (printed with dots)
+                else
+                {
+                    System.Globalization.NumberFormatInfo nfi = new System.Globalization.NumberFormatInfo();
+                    nfi.NumberDecimalSeparator = ".";
+
+                    Console.WriteLine(kvp.Key.ToString() + "'s curve with dots: ");
+                    for (int i = 0; i < userCurve.Length; i++)
+                    {
+                        Console.WriteLine(userCurve[i].ToString(nfi));
+                    }
                 }
                 Console.WriteLine();
             }
