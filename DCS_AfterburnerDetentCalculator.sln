@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCS_AfterburnerDetentCalculator", "DCS_AfterburnerDetentCalculator\DCS_AfterburnerDetentCalculator.csproj", "{050D7AE6-39AB-4D11-A9EC-259E40C0039E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{050D7AE6-39AB-4D11-A9EC-259E40C0039E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{050D7AE6-39AB-4D11-A9EC-259E40C0039E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{050D7AE6-39AB-4D11-A9EC-259E40C0039E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{050D7AE6-39AB-4D11-A9EC-259E40C0039E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6158E418-5520-4FB3-A5F1-5FDF7CA47754}
+	EndGlobalSection
+EndGlobal
