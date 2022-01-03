@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Projects\\temp\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator.csproj",
+      "projectUniqueName": "C:\\Projects\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator.csproj",
       "projectName": "DCS_AfterburnerDetentCalculator",
-      "projectPath": "C:\\Projects\\temp\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator.csproj",
+      "projectPath": "C:\\Projects\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator.csproj",
       "packagesPath": "C:\\Users\\Mikael\\.nuget\\packages\\",
-      "outputPath": "C:\\Projects\\temp\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator\\obj\\",
+      "outputPath": "C:\\Projects\\DCS_AfterburnerDetentCalculator\\DCS_AfterburnerDetentCalculator\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
