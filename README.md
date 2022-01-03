@@ -1,1 +1,1 @@
-DCS_AfterburnerDetentCalculator
+Helps setting DCS planes for user with physical detent throttle. Command line only atm, and you need to set your own values to get the calculator working. Planes tested and supported: FA-18, F-16, MiG-21. More planes will be added soon (or you can do so) In the future, I may add features such as detecting input, and setting all of your planes afterburner detent in less than minute with this program. Currently the program only shows the console log input, and does not change your controls. Use at your own risk still, backup often!
