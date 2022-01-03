@@ -80,9 +80,7 @@ namespace DCS_AfterburnerDetentCalculator
                 {
                     if (userCurve[i] > 1)
                     {
-                        // Move to function
-                        float mean = (userCurve[i + 1] + userCurve[i - 1]) / 2;
-                        userCurve[i] = mean;
+                        userCurve[i] = CalculateMean(userCurve[i - 1], userCurve[i + 1]);
                     }
                 }
 
@@ -113,9 +111,7 @@ namespace DCS_AfterburnerDetentCalculator
                         // Skips the first and 2nd element, the hard detent is defined already between 0-1 (curve number 1-2 in configs)
                         if (i > 1)
                         {
-                            // Move to function
-                            float mean = (userCurve[i + 1] + userCurve[i - 1]) / 2;
-                            userCurve[i] = mean;
+                            userCurve[i] = CalculateMean(userCurve[i - 1], userCurve[i + 1]);
                         }
                     }
                 }
@@ -143,6 +139,11 @@ namespace DCS_AfterburnerDetentCalculator
                 }
                 Console.WriteLine();
             }
+
+        }
+        static float CalculateMean(float _previousNum, float _nextNum)
+        {
+            return (_previousNum + _nextNum) / 2;
         }
     }
 }
