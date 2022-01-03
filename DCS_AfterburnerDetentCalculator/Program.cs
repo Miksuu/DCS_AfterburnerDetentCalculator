@@ -11,7 +11,7 @@ namespace DCS_AfterburnerDetentCalculator
             int originalValue = 16384;
 
             // ## EDIT THESE ACCORDING TO YOUR SETUP ######
-            // (I looked up mines from the VPC software)
+            // (I looked up mine from the VPC software)
 
             // Throttle at 100%, the total range of the axis
             int totalValue = 16384;
@@ -27,7 +27,7 @@ namespace DCS_AfterburnerDetentCalculator
             int hardDetentValue = 754;
 
             // If true, prints the value with a dot, otherwise with a comma (for pasting programs such as JoyPro)
-            bool printForDcsConfigLuaFile = false;
+            bool printForDcsConfigLuaFile = true;
 
             // #############################################
 
@@ -138,7 +138,7 @@ namespace DCS_AfterburnerDetentCalculator
                     Console.WriteLine(kvp.Key.ToString() + "'s curve with dots: ");
                     for (int i = 0; i < userCurve.Length; i++)
                     {
-                        Console.WriteLine(userCurve[i].ToString(nfi));
+                        Console.WriteLine("[" + (i+1) + "] = " + userCurve[i].ToString(nfi) + ",");
                     }
                 }
                 Console.WriteLine();
