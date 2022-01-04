@@ -26,7 +26,8 @@ namespace DCS_AfterburnerDetentCalculator
             // This is not tested properly yet, pretty much work in progress
             int hardDetentValue = 754;
 
-            // If true, prints the value with a dot, otherwise with a comma (for pasting programs such as JoyPro)
+            // If true, prints the value with a dot (for pasting in to dcs config),
+            // otherwise with a comma (for pasting to programs such as JoyPro)
             bool printForDcsConfigLuaFile = true;
 
             // #############################################
@@ -42,6 +43,7 @@ namespace DCS_AfterburnerDetentCalculator
             AircraftKVPs.Add("FA-18C", 12800);
             AircraftKVPs.Add("F-16C", 12950);
             AircraftKVPs.Add("MiG-21", 15060);
+            AircraftKVPs.Add("F-14", 13230);
 
             // ## CURRENTLY TESTED PLANES: FA-18C, F-16, MiG-21 ##
 
