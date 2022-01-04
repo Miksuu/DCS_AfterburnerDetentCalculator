@@ -26,6 +26,8 @@ namespace DCS_AfterburnerDetentCalculator
             // This is not tested properly yet, pretty much work in progress
             int hardDetentValue = 754;
 
+            bool setHardDetentValue = true;
+
             // If true, prints the value with a dot (for pasting in to dcs config),
             // otherwise with a comma (for pasting to programs such as JoyPro)
             bool printForDcsConfigLuaFile = true;
@@ -43,11 +45,9 @@ namespace DCS_AfterburnerDetentCalculator
             AircraftKVPs.Add("FA-18C", 12800);
             AircraftKVPs.Add("F-16C", 12950);
             AircraftKVPs.Add("MiG-21", 15060);
-            AircraftKVPs.Add("F-14", 13230);
+            AircraftKVPs.Add("F-14", 13110); // Could tune this up to 13250, but the afterburner stays on after putting the throttle back to soft detent for some reason
 
-            // ## CURRENTLY TESTED PLANES: FA-18C, F-16, MiG-21 ##
-
-            // Loops through all of the aircraft
+            // Loops through all of the aircrafts
             foreach (KeyValuePair<string, int> kvp in AircraftKVPs)
             {
                 int planeAfterburnerValue = kvp.Value * (int)multiplier; // Maybe get rid of the castings later on, use floats only?
@@ -75,9 +75,10 @@ namespace DCS_AfterburnerDetentCalculator
                     }
                 }
 
-                // This might not be the best way to go around the problem, but happens really rarely too,
-                // Only if the number between your actual detent and planes is more than 10%
+                // This might not be the best way to go around the problem
+                // It occurs if the number between your actual detent and planes is more than 10%
                 // Tested to work with mig21, which has insanely far AB pos in game (+93%?~~) while hornet etc have like 80%
+                // Leaves a weird ending to the curve though...
                 for (int i = 0; i < userCurve.Length; i++)
                 {
                     if (userCurve[i] > 1)
@@ -88,15 +89,18 @@ namespace DCS_AfterburnerDetentCalculator
 
                 // Starts setting up the hard detent positions
                 userCurve[0] = 0f;
-                userCurve[1] = hardDententValuePercentage / 2f;
+                if (setHardDetentValue)
+                {
+                    userCurve[1] = hardDententValuePercentage / 2f;
+                }
 
-                // How many times the means of the curve values will be calculated (15 maybe too unnecessary??)
-                int smoothingIterations = 15;
+                // How many times the means of the curve values will be calculated
+                int smoothingIterations = 120;
 
                 // Calculates the point which it will flatten out the curve
                 int countHowManyBeforeTheSoftDetent = 0;
 
-                for (int i = 0; i < userCurve.Length; i++)
+                for (int i = 1; i < userCurve.Length; i++)
                 {
                     if (userCurve[i] > afterburnerTurnOnPercentage)
                     {
@@ -108,10 +112,14 @@ namespace DCS_AfterburnerDetentCalculator
                 // Smoothens the curve according to the int set earlier
                 for (int s = 0; s < smoothingIterations; s++)
                 {
-                    for (int i = 0; i < countHowManyBeforeTheSoftDetent; i++)
+                    for (int i = 1; i < countHowManyBeforeTheSoftDetent; i++)
                     {
                         // Skips the first and 2nd element, the hard detent is defined already between 0-1 (curve number 1-2 in configs)
                         if (i > 1)
+                        {
+                            userCurve[i] = CalculateMean(userCurve[i - 1], userCurve[i + 1]);
+                        }
+                        else if (!setHardDetentValue && i == 1)
                         {
                             userCurve[i] = CalculateMean(userCurve[i - 1], userCurve[i + 1]);
                         }

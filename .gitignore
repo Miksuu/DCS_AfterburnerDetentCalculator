@@ -30,3 +30,17 @@
 *.exe
 *.out
 *.app
+
+.vs/DCS_AfterburnerDetentCalculator/DesignTimeBuild/.dtbcache.v2
+
+.vs/DCS_AfterburnerDetentCalculator/project-colors.json
+
+.vs/DCS_AfterburnerDetentCalculator/v17/.futdcache.v1
+
+.vs/DCS_AfterburnerDetentCalculator/v17/.suo
+
+DCS_AfterburnerDetentCalculator/bin/Debug/net5.0/DCS_AfterburnerDetentCalculator.pdb
+
+DCS_AfterburnerDetentCalculator/obj/Debug/net5.0/DCS_AfterburnerDetentCalculator.csproj.AssemblyReference.cache
+
+DCS_AfterburnerDetentCalculator/obj/Debug/net5.0/DCS_AfterburnerDetentCalculator.pdb
