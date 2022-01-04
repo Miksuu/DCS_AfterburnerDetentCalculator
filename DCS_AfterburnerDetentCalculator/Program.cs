@@ -26,7 +26,7 @@ namespace DCS_AfterburnerDetentCalculator
             // This is not tested properly yet, pretty much work in progress
             int hardDetentValue = 754;
 
-            bool setHardDetentValue = true;
+            bool setHardDetentValue = false;
 
             // If true, prints the value with a dot (for pasting in to dcs config),
             // otherwise with a comma (for pasting to programs such as JoyPro)
@@ -46,6 +46,7 @@ namespace DCS_AfterburnerDetentCalculator
             AircraftKVPs.Add("F-16C", 12950);
             AircraftKVPs.Add("MiG-21", 15060);
             AircraftKVPs.Add("F-14", 13110); // Could tune this up to 13250, but the afterburner stays on after putting the throttle back to soft detent for some reason
+            AircraftKVPs.Add("F-5E", 13380);
 
             // Loops through all of the aircrafts
             foreach (KeyValuePair<string, int> kvp in AircraftKVPs)
