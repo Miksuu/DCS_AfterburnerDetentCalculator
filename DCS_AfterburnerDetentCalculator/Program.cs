@@ -47,6 +47,7 @@ namespace DCS_AfterburnerDetentCalculator
             AircraftKVPs.Add("MiG-21", 15060);
             AircraftKVPs.Add("F-14", 13110); // Could tune this up to 13250, but the afterburner stays on after putting the throttle back to soft detent for some reason
             AircraftKVPs.Add("F-5E", 13380);
+            AircraftKVPs.Add("AJS37", 13400);
 
             // Loops through all of the aircrafts
             foreach (KeyValuePair<string, int> kvp in AircraftKVPs)
