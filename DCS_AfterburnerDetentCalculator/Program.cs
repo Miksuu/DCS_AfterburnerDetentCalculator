@@ -28,6 +28,10 @@ namespace DCS_AfterburnerDetentCalculator
 
             bool setHardDetentValue = false;
 
+            // If false, throttle will go from 0 to 100 (left to right), otherwise 100 to 0 (right to left)
+            // Set according to what type of throttle you have
+            bool ReverseThrottle = true;
+
             // If true, prints the value with a dot (for pasting in to dcs config),
             // otherwise with a comma (for pasting to programs such as JoyPro)
             bool printForDcsConfigLuaFile = true;
@@ -128,6 +132,11 @@ namespace DCS_AfterburnerDetentCalculator
                     }
                 }
 
+                if (ReverseThrottle)
+                {
+                    userCurve = RevertCurve(userCurve);
+                }
+
                 // Prints the results, place them to program such as JoyPro etc (printed with commas)
                 if (!printForDcsConfigLuaFile)
                 {
@@ -151,11 +160,28 @@ namespace DCS_AfterburnerDetentCalculator
                 }
                 Console.WriteLine();
             }
-
         }
         static float CalculateMean(float _previousNum, float _nextNum)
         {
             return (_previousNum + _nextNum) / 2;
+        }
+        static float[] RevertCurve(float[] _userCurve)
+        {
+            float[] newUserCurve = new float[_userCurve.Length];
+            int valueToReplaceWith = _userCurve.Length-1;
+            for (int i = 0; i < _userCurve.Length-1; i++)
+            {
+                newUserCurve[i] = 1 - _userCurve[valueToReplaceWith];
+                valueToReplaceWith--;
+            }
+            newUserCurve[10] = 1;
+            /*
+            Console.WriteLine("new: " + valueToReplaceWith);
+            for (int i = 0; i < newUserCurve.Length; i++)
+            {
+                Console.WriteLine(newUserCurve[i]);
+            }*/
+            return newUserCurve;
         }
     }
 }
