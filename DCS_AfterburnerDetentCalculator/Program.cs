@@ -48,7 +48,7 @@ namespace DCS_AfterburnerDetentCalculator
             Dictionary<string, int> AircraftKVPs = new Dictionary<string, int>();
             AircraftKVPs.Add("FA-18C", 12800);
             AircraftKVPs.Add("F-16C", 12950);
-            AircraftKVPs.Add("MiG-21", 15060);
+            AircraftKVPs.Add("MiG-21", 14950);
             AircraftKVPs.Add("F-14", 13110); // Could tune this up to 13250, but the afterburner stays on after putting the throttle back to soft detent for some reason
             AircraftKVPs.Add("F-5E", 13380);
             AircraftKVPs.Add("AJS37", 13400);
@@ -78,18 +78,6 @@ namespace DCS_AfterburnerDetentCalculator
                     else
                     {
                         userCurve[i] = (float)i / 10 + modifyCurveBy;
-                    }
-                }
-
-                // This might not be the best way to go around the problem
-                // It occurs if the number between your actual detent and planes is more than 10%
-                // Tested to work with mig21, which has insanely far AB pos in game (+93%?~~) while hornet etc have like 80%
-                // Leaves a weird ending to the curve though...
-                for (int i = 0; i < userCurve.Length; i++)
-                {
-                    if (userCurve[i] > 1)
-                    {
-                        userCurve[i] = CalculateMean(userCurve[i - 1], userCurve[i + 1]);
                     }
                 }
 
@@ -132,6 +120,16 @@ namespace DCS_AfterburnerDetentCalculator
                     }
                 }
 
+                // If the curve goes over 1 at any point, correct it
+                for (int i = 0; i < userCurve.Length; i++)
+                {
+                    if (userCurve[i] > 1)
+                    {
+                        userCurve[i] = 1-(userCurve[i - 1]- userCurve[i-2])/10;
+                        //Console.WriteLine("calculated: " + userCurve[i]);
+                    }
+                }
+
                 if (ReverseThrottle)
                 {
                     userCurve = RevertCurve(userCurve);
@@ -165,6 +163,8 @@ namespace DCS_AfterburnerDetentCalculator
         {
             return (_previousNum + _nextNum) / 2;
         }
+
+        // Reverses the curve for users thats throttles go from right to left
         static float[] RevertCurve(float[] _userCurve)
         {
             float[] newUserCurve = new float[_userCurve.Length];
@@ -175,12 +175,6 @@ namespace DCS_AfterburnerDetentCalculator
                 valueToReplaceWith--;
             }
             newUserCurve[10] = 1;
-            /*
-            Console.WriteLine("new: " + valueToReplaceWith);
-            for (int i = 0; i < newUserCurve.Length; i++)
-            {
-                Console.WriteLine(newUserCurve[i]);
-            }*/
             return newUserCurve;
         }
     }
