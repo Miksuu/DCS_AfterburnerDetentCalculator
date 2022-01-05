@@ -5,52 +5,68 @@ namespace DCS_AfterburnerDetentCalculator
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            // Tested using this, do not edit this!
-            int originalValue = 16384;
+            Calculator calculator = new Calculator();
+            calculator.Calculations();
+        }
 
-            // ## EDIT THESE ACCORDING TO YOUR SETUP ######
-            // (I looked up mine from the VPC software)
+    }
 
-            // Throttle at 100%, the total range of the axis
-            int totalValue = 16384;
+    internal class Calculator
+    {
+        // Tested using this, do not edit this!
+        int originalValue = 16384;
 
-            // The value of the physical detent on the throttle,
-            // each user has their own value depending where their physical detent is located 
-            int detentValue = 12330;
+        // ## EDIT THESE ACCORDING TO YOUR SETUP ######
+        // (I looked up mine from the VPC software)
 
-            // Set up your hard detent value that stops the engines from shutting down
-            // The curve will try to optimise so when your physical throttle is at for example, 5%, hardstop,
-            // can't continue without lifting detents, the plane will stay at idle throttle to avoid being moved on the ground
-            // This is not tested properly yet, pretty much work in progress
-            int hardDetentValue = 754;
-            bool setHardDetentValue = true;
+        // Throttle at 100%, the total range of the axis
+        int totalValue = 16384;
 
-            // If false, throttle will go from 0 to 100 (left to right), otherwise 100 to 0 (right to left)
-            // Set according to what type of throttle you have
-            bool ReverseThrottle = true;
+        // The value of the physical detent on the throttle,
+        // each user has their own value depending where their physical detent is located 
+        int detentValue = 12330;
 
-            // If true, prints the value with a dot (for pasting in to dcs config),
-            // otherwise with a comma (for pasting to programs such as JoyPro)
-            bool printForDcsConfigLuaFile = false;
+        // Set up your hard detent value that stops the engines from shutting down
+        // The curve will try to optimise so when your physical throttle is at for example, 5%, hardstop,
+        // can't continue without lifting detents, the plane will stay at idle throttle to avoid being moved on the ground
+        // This is not tested properly yet, pretty much work in progress
+        int hardDetentValue = 754;
+        bool setHardDetentValue = true;
 
-            // #############################################
+        // If false, throttle will go from 0 to 100 (left to right), otherwise 100 to 0 (right to left)
+        // Set according to what type of throttle you have
+        bool ReverseThrottle = true;
 
-            // Calculate a percentage out of those 
-            float detentPercentage = (float)detentValue / (float)totalValue;
+        // If true, prints the value with a dot (for pasting in to dcs config),
+        // otherwise with a comma (for pasting to programs such as JoyPro)
+        bool printForDcsConfigLuaFile = true;
 
-            // Used for calculating the planes multiplier (is 1 when your throttle has 16384 axis values)
-            float multiplier = totalValue / originalValue;
+        // #############################################
 
-            // Aircraft afterburner values
-            Dictionary<string, int> AircraftKVPs = new Dictionary<string, int>();
+        // Aircraft afterburner values
+        Dictionary<string, int> AircraftKVPs = new Dictionary<string, int>();
+
+        void InitAircraftDictionary()
+        {
             AircraftKVPs.Add("FA-18C", 12330);
             AircraftKVPs.Add("F-16C", 12330);
             AircraftKVPs.Add("MiG-21", 14900);
             AircraftKVPs.Add("F-14", 13110); // Could tune this up to 13250, but the afterburner stays on after putting the throttle back to soft detent for some reason
             AircraftKVPs.Add("F-5E", 13360);
             AircraftKVPs.Add("AJS37", 13400);
+        }
+
+        public void Calculations()
+        {
+            InitAircraftDictionary();
+
+            // Calculate a percentage out of those 
+            float detentPercentage = (float)detentValue / (float)totalValue;
+
+            // Used for calculating the planes multiplier (is 1 when your throttle has 16384 axis values)
+            float multiplier = totalValue / originalValue;
 
             // Loops through all of the aircrafts
             foreach (KeyValuePair<string, int> kvp in AircraftKVPs)
@@ -81,7 +97,7 @@ namespace DCS_AfterburnerDetentCalculator
                 userCurve[0] = 0f;
                 if (setHardDetentValue)
                 {
-                    userCurve[1] = hardDententValuePercentage / 2f;
+                    userCurve[1] = hardDententValuePercentage / 3f;
                 }
 
                 // How many times the means of the curve values will be calculated
@@ -121,7 +137,7 @@ namespace DCS_AfterburnerDetentCalculator
                 {
                     if (userCurve[i] > 1)
                     {
-                        userCurve[i] = 1-(userCurve[i - 1]- userCurve[i-2])/10;
+                        userCurve[i] = 1 - (userCurve[i - 1] - userCurve[i - 2]) / 10;
                         //Console.WriteLine("calculated: " + userCurve[i]);
                     }
                 }
@@ -149,7 +165,7 @@ namespace DCS_AfterburnerDetentCalculator
                     Console.WriteLine(kvp.Key.ToString() + "'s curve with dots: ");
                     for (int i = 0; i < userCurve.Length; i++)
                     {
-                        Console.WriteLine("[" + (i+1) + "] = " + userCurve[i].ToString(nfi) + ",");
+                        Console.WriteLine("[" + (i + 1) + "] = " + userCurve[i].ToString(nfi) + ",");
                     }
                 }
                 Console.WriteLine();
@@ -164,8 +180,8 @@ namespace DCS_AfterburnerDetentCalculator
         static float[] RevertCurve(float[] _userCurve)
         {
             float[] newUserCurve = new float[_userCurve.Length];
-            int valueToReplaceWith = _userCurve.Length-1;
-            for (int i = 0; i < _userCurve.Length-1; i++)
+            int valueToReplaceWith = _userCurve.Length - 1;
+            for (int i = 0; i < _userCurve.Length - 1; i++)
             {
                 newUserCurve[i] = 1 - _userCurve[valueToReplaceWith];
                 valueToReplaceWith--;
