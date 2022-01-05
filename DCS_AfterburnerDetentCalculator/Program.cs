@@ -25,8 +25,7 @@ namespace DCS_AfterburnerDetentCalculator
             // can't continue without lifting detents, the plane will stay at idle throttle to avoid being moved on the ground
             // This is not tested properly yet, pretty much work in progress
             int hardDetentValue = 754;
-
-            bool setHardDetentValue = false;
+            bool setHardDetentValue = true;
 
             // If false, throttle will go from 0 to 100 (left to right), otherwise 100 to 0 (right to left)
             // Set according to what type of throttle you have
@@ -34,7 +33,7 @@ namespace DCS_AfterburnerDetentCalculator
 
             // If true, prints the value with a dot (for pasting in to dcs config),
             // otherwise with a comma (for pasting to programs such as JoyPro)
-            bool printForDcsConfigLuaFile = true;
+            bool printForDcsConfigLuaFile = false;
 
             // #############################################
 
@@ -46,20 +45,17 @@ namespace DCS_AfterburnerDetentCalculator
 
             // Aircraft afterburner values
             Dictionary<string, int> AircraftKVPs = new Dictionary<string, int>();
-            AircraftKVPs.Add("FA-18C", 12800);
-            AircraftKVPs.Add("F-16C", 12950);
-            AircraftKVPs.Add("MiG-21", 14950);
+            AircraftKVPs.Add("FA-18C", 12330);
+            AircraftKVPs.Add("F-16C", 12330);
+            AircraftKVPs.Add("MiG-21", 14900);
             AircraftKVPs.Add("F-14", 13110); // Could tune this up to 13250, but the afterburner stays on after putting the throttle back to soft detent for some reason
-            AircraftKVPs.Add("F-5E", 13380);
+            AircraftKVPs.Add("F-5E", 13360);
             AircraftKVPs.Add("AJS37", 13400);
 
             // Loops through all of the aircrafts
             foreach (KeyValuePair<string, int> kvp in AircraftKVPs)
             {
                 int planeAfterburnerValue = kvp.Value * (int)multiplier; // Maybe get rid of the castings later on, use floats only?
-
-                // Offset, not needed at least on my throttle, shouldn't be needed if the afterburner ignition values above are correct
-                //planeAfterburnerValue = planeAfterburnerValue - 200;
 
                 // Calculates all the necessary values for the curve optimisation
                 float hardDententValuePercentage = (float)hardDetentValue / (float)totalValue;
