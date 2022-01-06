@@ -33,8 +33,9 @@ namespace DCS_AfterburnerDetentCalculator
             JoystickReader jr = new JoystickReader();
             jr.Sticks = jr.GetSticks(calculator.totalValue);
 
+            Console.WriteLine("##### DCS Detent Curve Calculator by Miksuu ##### \n");
 
-            Console.WriteLine("Select your throttle from the list: ");
+            Console.WriteLine("Select your throttle from the list. \n MAKE SURE THAT ALL OF YOUR AXISES ON THAT DEVICE ARE CENTERED BEFORE PROCEEDING!!! \n");
 
             // Prints all the devices and their GUID's
             foreach (var item in jr.Sticks)
@@ -43,8 +44,6 @@ namespace DCS_AfterburnerDetentCalculator
 
                 jsIndex++;
             }
-
-
 
             // Asks the user to enter the desired device, checks for out of range exceptions
             while (true)
@@ -63,17 +62,16 @@ namespace DCS_AfterburnerDetentCalculator
                     else
                     {
                         Console.WriteLine("Invalid input! You selected: " + selectedJoystick +
-                                          ". Select from the range: 1" + "-" + jr.Sticks.Length);
+                                          ". Select from the range: 1" + "-" + jr.Sticks.Length + "\n");
                     }
                 }
                 else
                 {
-                    Console.WriteLine( "Error! Invalid input.");
+                    Console.WriteLine( "Error! Invalid input. Enter a integer from 1 to " + jr.Sticks.Length + "\n");
                 }
             }
 
-            Console.WriteLine("Selected: " + selectedJoystick);
-            Console.WriteLine("Choose an axis to set detents on: ");
+            Console.WriteLine("Selected:" +  selectedJoystick + "\n Choose an axis to set the detents on by moving the throttle axis fully forward (100%) \n");
 
             // Reads the axis values of the selected device
             while (true)
@@ -107,9 +105,9 @@ namespace DCS_AfterburnerDetentCalculator
                 System.Threading.Thread.Sleep(10);
             }
 
-            //Console.WriteLine("Setting: " + axisToCalibrateWith + " | inverted: " + invertedThrottle);
+            Console.WriteLine("Detected: " + axisToCalibrateWith + " is inverted:" + invertedThrottle + "\n");
 
-            Console.WriteLine("Set your afterburner detent value on the throttle and press spacebar");
+            Console.WriteLine("Move your throttle SLOWLY backwards until it sits on the afterburner detent. Then press spacebar. \n");
 
             while (true)
             {
@@ -118,9 +116,9 @@ namespace DCS_AfterburnerDetentCalculator
 
             afterburnerDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
 
-            //Console.WriteLine("Set afterburner detent value at: " + afterburnerDetentValue);
+            Console.WriteLine("Done setting afterburner detent value at: " + afterburnerDetentValue + "\n");
 
-            Console.WriteLine("Set your afterburner IDLE detent value on the throttle and then press spacebar");
+            Console.WriteLine("Move your throttle fully backwards to engine idle detent value on the throttle and then press spacebar. \n");
 
             while (true)
             {
@@ -129,18 +127,15 @@ namespace DCS_AfterburnerDetentCalculator
 
             idleDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
 
-            Console.WriteLine("Set idle value at: " + idleDetentValue);
+            Console.WriteLine("Done setting idle value at: " + idleDetentValue + "\n");
 
             if (invertedThrottle)
             {
                 afterburnerDetentValue = calculator.totalValue - afterburnerDetentValue;
                 idleDetentValue = calculator.totalValue - idleDetentValue;
-                Console.WriteLine("NEW VALUEs: " + afterburnerDetentValue + "|||" + idleDetentValue);
             }
-            else
-            {
-                Console.WriteLine("VALUEs: " + afterburnerDetentValue + "|||" + idleDetentValue);
-            }
+
+            Console.WriteLine("Your values: " + afterburnerDetentValue + "|||" + idleDetentValue + "\n");
 
             calculator.Calculations(invertedThrottle, afterburnerDetentValue, idleDetentValue);
         }
