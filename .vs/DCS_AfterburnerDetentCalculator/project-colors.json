@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "050d7ae6-39ab-4d11-a9ec-259e40c0039e": {
+      "ProjectGuid": "050d7ae6-39ab-4d11-a9ec-259e40c0039e",
+      "DisplayName": "DCS_AfterburnerDetentCalculator",
+      "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 1
+}

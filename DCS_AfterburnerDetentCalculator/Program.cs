@@ -71,7 +71,7 @@ namespace DCS_AfterburnerDetentCalculator
                 }
             }
 
-            Console.WriteLine("Selected:" +  selectedJoystick + "\n Choose an axis to set the detents on by moving the throttle axis fully forward (100%) \n");
+            Console.WriteLine("Selected: " +  selectedJoystick + "\n Choose an axis to set the detents on by moving the throttle axis fully forward (100%) \n");
 
             // Reads the axis values of the selected device
             while (true)
