@@ -39,8 +39,9 @@ Instructions (updated for V2 on 06/01/2022):
 10) Test that it works. If it doesn't, you probably forgot to invert the axis or set it as slider. The program is still on it's very early stage. Feel free to contact me if you have any issues with it.
 
 Changelog:
+
 v2:
 - Added a prompt for the user that he can select between setting up the detent that prevents the engine from shutting down accidentally and the afterburner detent, or only the afterburner detent.
 
 v1:
-Initial build
+- Initial build
