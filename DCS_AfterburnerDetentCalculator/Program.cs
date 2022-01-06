@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SlimDX.DirectInput;
 
 namespace DCS_AfterburnerDetentCalculator
 {
@@ -9,8 +10,61 @@ namespace DCS_AfterburnerDetentCalculator
         {
             Calculator calculator = new Calculator();
             calculator.Calculations();
+
+            JoystickReader jr = new JoystickReader();
+            jr.Sticks = jr.GetSticks(calculator.totalValue);
+
+            foreach (var item in jr.Sticks)
+            {
+                Console.WriteLine(item.Information.ProductName + " " + (item.Information.InstanceGuid));
+            }
+
+            while (true)
+            {
+                jr.ReadThrottleAxises(jr.Sticks[5]);
+            }
+        }
+    }
+
+    // Reads the throttles axis values used for the configuration
+    public class JoystickReader
+    {
+        DirectInput Input = new DirectInput();
+        public Joystick[] Sticks;
+        Joystick stick;
+
+        int rotationXValue = 0;
+        int rotationYValue = 0;
+
+        // Reads the XY rotation values of the throttle
+        public void ReadThrottleAxises(Joystick stick)
+        {
+            JoystickState state = new JoystickState();
+            state = stick.GetCurrentState();
+            rotationXValue = state.RotationX;
+            rotationYValue = state.RotationY;
+
+            Console.WriteLine(rotationXValue + " " + rotationYValue);
         }
 
+        // Gets all of the input devices in an array and returns them for the main program
+        public Joystick[] GetSticks(int _totalValue)
+        {
+            List<Joystick> sticks = new List<Joystick>();
+            foreach (DeviceInstance device in Input.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly))
+            {
+                stick = new Joystick(Input, device.InstanceGuid);
+                stick.Acquire();
+
+                foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
+                {
+                    if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
+                        stick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(0, _totalValue);
+                }
+                sticks.Add(stick);
+            }
+            return sticks.ToArray();
+        }
     }
 
     internal class Calculator
@@ -22,7 +76,7 @@ namespace DCS_AfterburnerDetentCalculator
         // (I looked up mine from the VPC software)
 
         // Throttle at 100%, the total range of the axis
-        int totalValue = 16384;
+        public int totalValue = 16384;
 
         // The value of the physical detent on the throttle,
         // each user has their own value depending where their physical detent is located 

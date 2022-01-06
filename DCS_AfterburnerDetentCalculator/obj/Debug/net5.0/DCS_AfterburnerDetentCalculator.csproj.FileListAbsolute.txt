@@ -14,3 +14,5 @@ C:\Projects\DCS_AfterburnerDetentCalculator\DCS_AfterburnerDetentCalculator\obj\
 C:\Projects\DCS_AfterburnerDetentCalculator\DCS_AfterburnerDetentCalculator\obj\Debug\net5.0\ref\DCS_AfterburnerDetentCalculator.dll
 C:\Projects\DCS_AfterburnerDetentCalculator\DCS_AfterburnerDetentCalculator\obj\Debug\net5.0\DCS_AfterburnerDetentCalculator.pdb
 C:\Projects\DCS_AfterburnerDetentCalculator\DCS_AfterburnerDetentCalculator\obj\Debug\net5.0\DCS_AfterburnerDetentCalculator.genruntimeconfig.cache
+C:\Projects\DCS_AfterburnerDetentCalculator\DCS_AfterburnerDetentCalculator\bin\Debug\net5.0\SlimDX.dll
+C:\Projects\DCS_AfterburnerDetentCalculator\DCS_AfterburnerDetentCalculator\obj\Debug\net5.0\DCS_AfterburnerDetentCalculator.csproj.CopyComplete
