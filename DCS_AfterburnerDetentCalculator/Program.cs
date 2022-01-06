@@ -24,6 +24,8 @@ namespace DCS_AfterburnerDetentCalculator
         int afterburnerDetentValue = 0;
         int idleDetentValue = 0;
 
+        bool setIdleDetentValue = false;
+
         int jsIndex = 1;
 
         public void DetentSetupProcess()
@@ -71,7 +73,47 @@ namespace DCS_AfterburnerDetentCalculator
                 }
             }
 
-            Console.WriteLine("Selected: " +  selectedJoystick + "\n Choose an axis to set the detents on by moving the throttle axis fully forward (100%) \n");
+            // Asks the user to enter the desired device, checks for out of range exceptions
+
+            Console.WriteLine("Selected: " +  selectedJoystick + "\n Do you want to setup afterburner detent only [a]" +
+                " or both afterburner detent and idle detent [b]? It may stop plane moving while the throttle is fully aft" +
+                " without going over the stop detent.\n Press [a] if you never had this issue." );
+
+            // Checks if the user wants to go for setting up only afterburner, or both afterburner and stop engines detent
+            while (true)
+            {
+                ConsoleKeyInfo UserInputSelectSetupMode = Console.ReadKey();
+
+                char selectedOption = 'f';
+
+                if (char.IsLetter(UserInputSelectSetupMode.KeyChar))
+                {
+                    selectedOption = char.Parse(UserInputSelectSetupMode.KeyChar.ToString());
+
+                    if (selectedOption == 'a' || selectedOption == 'A')
+                    {
+                        setIdleDetentValue = false;
+                        Console.WriteLine();
+                        break;
+                    }
+                    else if (selectedOption == 'b' || selectedOption == 'B')
+                    {
+                        setIdleDetentValue = true;
+                        Console.WriteLine();
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input! Type a or b");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Error! Your input was not a letter. Enter a or b");
+                }
+            }
+
+            Console.WriteLine("Choose an axis to set the detents on by moving the throttle axis fully forward(100 %) \n");
 
             // Reads the axis values of the selected device
             while (true)
@@ -118,17 +160,22 @@ namespace DCS_AfterburnerDetentCalculator
 
             Console.WriteLine("Done setting afterburner detent value at: " + afterburnerDetentValue + "\n");
 
-            Console.WriteLine("Move your throttle fully backwards to engine idle detent value on the throttle and then press spacebar. \n");
-
-            while (true)
+            // If the user wants to set the idle/engine stop hard detent to the curve
+            if (setIdleDetentValue)
             {
-                if (Console.ReadKey().Key == ConsoleKey.Spacebar) break;
+                Console.WriteLine("Move your throttle fully backwards to engine idle detent value on the throttle and then press spacebar. \n");
+
+                while (true)
+                {
+                    if (Console.ReadKey().Key == ConsoleKey.Spacebar) break;
+                }
+
+                idleDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
+
+                Console.WriteLine("Done setting idle value at: " + idleDetentValue + "\n");
             }
 
-            idleDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
-
-            Console.WriteLine("Done setting idle value at: " + idleDetentValue + "\n");
-
+            // Checks for the inverted throttle (100 to 0% when moving forward to aft), and reverses the numbers if this is the case
             if (invertedThrottle)
             {
                 afterburnerDetentValue = calculator.totalValue - afterburnerDetentValue;
@@ -137,7 +184,7 @@ namespace DCS_AfterburnerDetentCalculator
 
             Console.WriteLine("Your values: " + afterburnerDetentValue + "|||" + idleDetentValue + "\n");
 
-            calculator.Calculations(invertedThrottle, afterburnerDetentValue, idleDetentValue);
+            calculator.Calculations(invertedThrottle, afterburnerDetentValue, idleDetentValue, setIdleDetentValue);
         }
     }
 
@@ -223,6 +270,7 @@ namespace DCS_AfterburnerDetentCalculator
 
     internal class Calculator
     {
+        // MOST OF THE VARIABLES MOVED TO THE METHOD CALL
         // Tested using this, do not edit this!
         //int originalValue = 16384;
 
@@ -241,7 +289,7 @@ namespace DCS_AfterburnerDetentCalculator
         // can't continue without lifting detents, the plane will stay at idle throttle to avoid being moved on the ground
         // This is not tested properly yet, pretty much work in progress
         //int hardDetentValue = 754;
-        bool setHardDetentValue = true;
+        //bool setIdleDetentValue = true;
 
         // If false, throttle will go from 0 to 100 (left to right), otherwise 100 to 0 (right to left)
         // Set according to what type of throttle you have
@@ -266,7 +314,7 @@ namespace DCS_AfterburnerDetentCalculator
             AircraftKVPs.Add("AJS37", 13400);
         }
 
-        public void Calculations(bool _reversed, int _detentValue, int _idleDetentValue)
+        public void Calculations(bool _reversed, int _detentValue, int _idleDetentValue, bool _setIdleDetentValue)
         {
             InitAircraftDictionary();
 
@@ -303,7 +351,7 @@ namespace DCS_AfterburnerDetentCalculator
 
                 // Starts setting up the hard detent positions
                 userCurve[0] = 0f;
-                if (setHardDetentValue)
+                if (_setIdleDetentValue)
                 {
                     userCurve[1] = hardDententValuePercentage / 2.2f;
                 }
@@ -333,7 +381,7 @@ namespace DCS_AfterburnerDetentCalculator
                         {
                             userCurve[i] = CalculateMean(userCurve[i - 1], userCurve[i + 1]);
                         }
-                        else if (!setHardDetentValue && i == 1)
+                        else if (!_setIdleDetentValue && i == 1)
                         {
                             userCurve[i] = CalculateMean(userCurve[i - 1], userCurve[i + 1]);
                         }
