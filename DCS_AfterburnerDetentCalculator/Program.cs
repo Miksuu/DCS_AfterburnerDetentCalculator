@@ -44,19 +44,31 @@ namespace DCS_AfterburnerDetentCalculator
                 jsIndex++;
             }
 
+
+
             // Asks the user to enter the desired device, checks for out of range exceptions
             while (true)
             {
-                selectedJoystick = Int32.Parse(Console.ReadLine());
+                ConsoleKeyInfo UserInputSelectedDevice = Console.ReadKey();
 
-                if (selectedJoystick > 0 && selectedJoystick <= jr.Sticks.Length)
+                if (char.IsDigit(UserInputSelectedDevice.KeyChar))
                 {
-                    break;
+                    selectedJoystick = int.Parse(UserInputSelectedDevice.KeyChar.ToString());
+
+                    if (selectedJoystick > 0 && selectedJoystick <= jr.Sticks.Length)
+                    {
+                        Console.WriteLine();
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input! You selected: " + selectedJoystick +
+                                          ". Select from the range: 1" + "-" + jr.Sticks.Length);
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input! You selected: " + selectedJoystick +
-                                      ". Select from the range: 1" + "-" + jr.Sticks.Length);
+                    Console.WriteLine( "Error! Invalid input.");
                 }
             }
 
