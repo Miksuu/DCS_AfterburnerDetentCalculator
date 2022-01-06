@@ -8,20 +8,32 @@ namespace DCS_AfterburnerDetentCalculator
     {
         static void Main()
         {
+            DetentSetup detentSetup = new DetentSetup();
+
+            detentSetup.DetentSetupProcess();
+        }
+    }
+
+    internal class DetentSetup
+    {
+        int selectedJoystick = 0;
+
+        int axisToCalibrateWith = 0;
+        bool invertedThrottle = false;
+
+        int afterburnerDetentValue = 0;
+        int idleDetentValue = 0;
+
+        int jsIndex = 1;
+
+        public void DetentSetupProcess()
+        {
             Calculator calculator = new Calculator();
 
             JoystickReader jr = new JoystickReader();
             jr.Sticks = jr.GetSticks(calculator.totalValue);
 
-            int selectedJoystick = 0;
 
-            int axisToCalibrateWith = 0;
-            bool invertedThrottle = false;
-
-            int afterburnerDetentValue = 0;
-            int idleDetentValue = 0;
-
-            int jsIndex = 1;
             Console.WriteLine("Select your throttle from the list: ");
 
             // Prints all the devices and their GUID's
@@ -62,7 +74,7 @@ namespace DCS_AfterburnerDetentCalculator
 
                 for (int i = 0; i < jr.monitorArray.Length; i++)
                 {
-                    if (jr.monitorArray[i] > calculator.totalValue-calculator.totalValue * 0.01)
+                    if (jr.monitorArray[i] > calculator.totalValue - calculator.totalValue * 0.01)
                     {
                         axisToCalibrateWith = i;
                         invertedThrottle = false;
@@ -104,7 +116,7 @@ namespace DCS_AfterburnerDetentCalculator
             }
 
             idleDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
-            
+
             Console.WriteLine("Set idle value at: " + idleDetentValue);
 
             if (invertedThrottle)
@@ -123,7 +135,7 @@ namespace DCS_AfterburnerDetentCalculator
     }
 
     // Reads the throttles axis values used for the configuration
-    public class JoystickReader
+    internal class JoystickReader
     {
         DirectInput Input = new DirectInput();
         public Joystick[] Sticks;
@@ -172,7 +184,6 @@ namespace DCS_AfterburnerDetentCalculator
                 case 5:
                     monitorArray[5] = state.RotationZ;
                     break;
-
                 default:
                     Console.WriteLine("Error on reading specific axis: " + _axis);
                     break;
