@@ -378,6 +378,7 @@ namespace DCS_AfterburnerDetentCalculator
                 }
                 Console.WriteLine();
             }
+            Console.ReadKey();
         }
         static float CalculateMean(float _previousNum, float _nextNum)
         {
