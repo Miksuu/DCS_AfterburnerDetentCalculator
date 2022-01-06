@@ -5,7 +5,7 @@ Instructions (updated for V1 06/01/2022):
 2) If the program does not start, try downloading ".Net Framework 4.8" from here: https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48 . If it still doesn't work, try contacting me on Discord (Miksuu#4278) and we can try to figure it out.
 3) Follow the instructions on the console app. The program will figure out how your throttle axis works by detecting the if it's inverted or not. The key part here is to have ALL of your axises on your throttle not on 1% or 99% of the axis (keep them centered)
 4) After the program prints the list of the planes, copypaste the 11 rows from [1] to [11] of a plane. We will paste them to the DCS config later on.
-5) Start up DCS, go to controls, select a plane. Go to axis settings of that plane, open Thrust axis tuning. Enabled Slider. If you see that the black box moves from left to right, while moving your throttle from aft to forward, you need to invert the axis. Enable user curve. Press ok and save the file.
+5) Start up DCS, go to controls, select a plane. Go to axis settings of that plane, open Thrust axis tuning. Enable Slider. If you see that the black box moves from left to right, while moving your throttle from aft to forward, you need to invert the axis. Enable User Curve. Press ok and save the file.
 6) Locate the file on your disk, and open it (preferably with program such as Notepad++).
 7) Scroll down until you see an usercurve such as:
  						["curvature"] = {
