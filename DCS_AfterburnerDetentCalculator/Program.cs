@@ -9,20 +9,53 @@ namespace DCS_AfterburnerDetentCalculator
         static void Main()
         {
             Calculator calculator = new Calculator();
-            calculator.Calculations();
 
             JoystickReader jr = new JoystickReader();
             jr.Sticks = jr.GetSticks(calculator.totalValue);
 
+            int selectedJoystick = 0;
+
+            Console.WriteLine("Select your throttle from the list: ");
+
+            int jsIndex = 1;
+
+            // Prints all the devices and their GUID's
             foreach (var item in jr.Sticks)
             {
-                Console.WriteLine(item.Information.ProductName + " " + (item.Information.InstanceGuid));
+                Console.WriteLine(jsIndex + "||" + item.Information.ProductName + " " + (item.Information.InstanceGuid));
+
+                jsIndex++;
             }
 
+            // Asks the user to enter the desired device, checks for out of range exceptions
             while (true)
             {
-                jr.ReadThrottleAxises(jr.Sticks[5]);
+                selectedJoystick = Int32.Parse(Console.ReadLine());
+
+                if (selectedJoystick > 0 && selectedJoystick <= jr.Sticks.Length)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input! You selected: " + selectedJoystick +
+                                      ". Select from the range: 1" + "-" + jr.Sticks.Length);
+                }
             }
+
+            Console.WriteLine("Selected: " + selectedJoystick);
+            Console.WriteLine("Choose an axis to calibrate: ");
+
+            // Reads the axis values of the selected device
+            while(true)
+            {
+                jr.ReadThrottleAxises(jr.Sticks[selectedJoystick]);
+                Console.Write("\r[1 X] {0}     |[2 Y]{1}     |[3 Z]{2}     [4 rX] {3}     |[5 rY]{4}     |[6 rZ]{5}     ",
+                    jr.xValue, jr.yValue, jr.zValue, jr.rotationXValue, jr.rotationYValue, jr.rotationZValue);
+                System.Threading.Thread.Sleep(10);
+            }
+
+            //calculator.Calculations();
         }
     }
 
@@ -33,18 +66,25 @@ namespace DCS_AfterburnerDetentCalculator
         public Joystick[] Sticks;
         Joystick stick;
 
-        int rotationXValue = 0;
-        int rotationYValue = 0;
+        public int xValue = 0;
+        public int yValue = 0;
+        public int zValue = 0;
+        public int rotationXValue = 0;
+        public int rotationYValue = 0;
+        public int rotationZValue = 0;
 
         // Reads the XY rotation values of the throttle
         public void ReadThrottleAxises(Joystick stick)
         {
             JoystickState state = new JoystickState();
             state = stick.GetCurrentState();
+
+            xValue = state.X;
+            yValue = state.Y;
+            zValue = state.Z;
             rotationXValue = state.RotationX;
             rotationYValue = state.RotationY;
-
-            Console.WriteLine(rotationXValue + " " + rotationYValue);
+            rotationZValue = state.RotationZ;
         }
 
         // Gets all of the input devices in an array and returns them for the main program
@@ -59,7 +99,9 @@ namespace DCS_AfterburnerDetentCalculator
                 foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
                 {
                     if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
+                    {
                         stick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(0, _totalValue);
+                    }
                 }
                 sticks.Add(stick);
             }
@@ -151,7 +193,7 @@ namespace DCS_AfterburnerDetentCalculator
                 userCurve[0] = 0f;
                 if (setHardDetentValue)
                 {
-                    userCurve[1] = hardDententValuePercentage / 3f;
+                    userCurve[1] = hardDententValuePercentage / 2.5f;
                 }
 
                 // How many times the means of the curve values will be calculated
