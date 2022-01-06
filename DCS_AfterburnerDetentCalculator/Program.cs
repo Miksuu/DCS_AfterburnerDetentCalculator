@@ -15,9 +15,14 @@ namespace DCS_AfterburnerDetentCalculator
 
             int selectedJoystick = 0;
 
-            Console.WriteLine("Select your throttle from the list: ");
+            int axisToCalibrateWith = 0;
+            bool invertedThrottle = false;
+
+            int afterburnerDetentValue = 0;
+            int idleDetentValue = 0;
 
             int jsIndex = 1;
+            Console.WriteLine("Select your throttle from the list: ");
 
             // Prints all the devices and their GUID's
             foreach (var item in jr.Sticks)
@@ -44,18 +49,76 @@ namespace DCS_AfterburnerDetentCalculator
             }
 
             Console.WriteLine("Selected: " + selectedJoystick);
-            Console.WriteLine("Choose an axis to calibrate: ");
+            Console.WriteLine("Choose an axis to set detents on: ");
 
             // Reads the axis values of the selected device
-            while(true)
+            while (true)
             {
+                bool canBreak = false;
+
                 jr.ReadThrottleAxises(jr.Sticks[selectedJoystick]);
-                Console.Write("\r[1 X] {0}     |[2 Y]{1}     |[3 Z]{2}     [4 rX] {3}     |[5 rY]{4}     |[6 rZ]{5}     ",
-                    jr.xValue, jr.yValue, jr.zValue, jr.rotationXValue, jr.rotationYValue, jr.rotationZValue);
+                Console.Write("\r[0 X] {0}     |[1 Y]{1}     |[2 Z]{2}     [3 rX] {3}     |[4 rY]{4}     |[5 rZ]{5}     ",
+                    jr.monitorArray[0], jr.monitorArray[1], jr.monitorArray[2], jr.monitorArray[3], jr.monitorArray[4], jr.monitorArray[5]);
+
+                for (int i = 0; i < jr.monitorArray.Length; i++)
+                {
+                    if (jr.monitorArray[i] > calculator.totalValue-calculator.totalValue * 0.01)
+                    {
+                        axisToCalibrateWith = i;
+                        invertedThrottle = false;
+                        canBreak = true;
+                        break;
+                    }
+                    else if (jr.monitorArray[i] < calculator.totalValue * 0.01)
+                    {
+                        axisToCalibrateWith = i;
+                        invertedThrottle = true;
+                        canBreak = true;
+                        break;
+                    }
+                }
+
+                if (canBreak) break;
+
                 System.Threading.Thread.Sleep(10);
             }
 
-            //calculator.Calculations();
+            //Console.WriteLine("Setting: " + axisToCalibrateWith + " | inverted: " + invertedThrottle);
+
+            Console.WriteLine("Set your afterburner detent value on the throttle and press spacebar");
+
+            while (true)
+            {
+                if (Console.ReadKey().Key == ConsoleKey.Spacebar) break;
+            }
+
+            afterburnerDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
+
+            //Console.WriteLine("Set afterburner detent value at: " + afterburnerDetentValue);
+
+            Console.WriteLine("Set your afterburner IDLE detent value on the throttle and then press spacebar");
+
+            while (true)
+            {
+                if (Console.ReadKey().Key == ConsoleKey.Spacebar) break;
+            }
+
+            idleDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
+            
+            Console.WriteLine("Set idle value at: " + idleDetentValue);
+
+            if (invertedThrottle)
+            {
+                afterburnerDetentValue = calculator.totalValue - afterburnerDetentValue;
+                idleDetentValue = calculator.totalValue - idleDetentValue;
+                Console.WriteLine("NEW VALUEs: " + afterburnerDetentValue + "|||" + idleDetentValue);
+            }
+            else
+            {
+                Console.WriteLine("VALUEs: " + afterburnerDetentValue + "|||" + idleDetentValue);
+            }
+
+            calculator.Calculations(invertedThrottle, afterburnerDetentValue, idleDetentValue);
         }
     }
 
@@ -66,25 +129,56 @@ namespace DCS_AfterburnerDetentCalculator
         public Joystick[] Sticks;
         Joystick stick;
 
-        public int xValue = 0;
-        public int yValue = 0;
-        public int zValue = 0;
-        public int rotationXValue = 0;
-        public int rotationYValue = 0;
-        public int rotationZValue = 0;
+        public int[] monitorArray = new int[6];
 
-        // Reads the XY rotation values of the throttle
-        public void ReadThrottleAxises(Joystick stick)
+        // Reads the XYZ and rotation values of the throttle
+        public void ReadThrottleAxises(Joystick _stick)
         {
             JoystickState state = new JoystickState();
-            state = stick.GetCurrentState();
+            state = _stick.GetCurrentState();
 
-            xValue = state.X;
-            yValue = state.Y;
-            zValue = state.Z;
-            rotationXValue = state.RotationX;
-            rotationYValue = state.RotationY;
-            rotationZValue = state.RotationZ;
+            monitorArray[0] = state.X;
+            monitorArray[1] = state.Y;
+            monitorArray[2] = state.Z;
+            monitorArray[3] = state.RotationX;
+            monitorArray[4] = state.RotationY;
+            monitorArray[5] = state.RotationZ;
+        }
+
+        public int ReadSpecificAxis (Joystick _stick, int _axis)
+        {
+            JoystickState state = new JoystickState();
+            state = _stick.GetCurrentState();
+
+            //Console.WriteLine( "axis: " + _axis +  "ROT x:" + state.RotationX);
+
+            switch (_axis)
+            {
+                case 0:
+                    monitorArray[0] = state.X;
+                    break;
+                case 1:
+                    monitorArray[1] = state.Y;
+                    break;
+                case 2:
+                    monitorArray[2] = state.Z;
+                    break;
+                case 3:
+                    monitorArray[3] = state.RotationX;
+                    break;
+                case 4:
+                    monitorArray[4] = state.RotationY;
+                    break;
+                case 5:
+                    monitorArray[5] = state.RotationZ;
+                    break;
+
+                default:
+                    Console.WriteLine("Error on reading specific axis: " + _axis);
+                    break;
+            }
+
+            return monitorArray[_axis];
         }
 
         // Gets all of the input devices in an array and returns them for the main program
@@ -112,7 +206,7 @@ namespace DCS_AfterburnerDetentCalculator
     internal class Calculator
     {
         // Tested using this, do not edit this!
-        int originalValue = 16384;
+        //int originalValue = 16384;
 
         // ## EDIT THESE ACCORDING TO YOUR SETUP ######
         // (I looked up mine from the VPC software)
@@ -122,18 +216,18 @@ namespace DCS_AfterburnerDetentCalculator
 
         // The value of the physical detent on the throttle,
         // each user has their own value depending where their physical detent is located 
-        int detentValue = 12330;
+        //int detentValue = 12330;
 
         // Set up your hard detent value that stops the engines from shutting down
         // The curve will try to optimise so when your physical throttle is at for example, 5%, hardstop,
         // can't continue without lifting detents, the plane will stay at idle throttle to avoid being moved on the ground
         // This is not tested properly yet, pretty much work in progress
-        int hardDetentValue = 754;
+        //int hardDetentValue = 754;
         bool setHardDetentValue = true;
 
         // If false, throttle will go from 0 to 100 (left to right), otherwise 100 to 0 (right to left)
         // Set according to what type of throttle you have
-        bool ReverseThrottle = true;
+        //bool ReverseThrottle = true;
 
         // If true, prints the value with a dot (for pasting in to dcs config),
         // otherwise with a comma (for pasting to programs such as JoyPro)
@@ -154,24 +248,24 @@ namespace DCS_AfterburnerDetentCalculator
             AircraftKVPs.Add("AJS37", 13400);
         }
 
-        public void Calculations()
+        public void Calculations(bool _reversed, int _detentValue, int _idleDetentValue)
         {
             InitAircraftDictionary();
 
             // Calculate a percentage out of those 
-            float detentPercentage = (float)detentValue / (float)totalValue;
+            float detentPercentage = (float)_detentValue / (float)totalValue;
 
             // Used for calculating the planes multiplier (is 1 when your throttle has 16384 axis values)
-            float multiplier = totalValue / originalValue;
+            //float multiplier = totalValue / originalValue;
 
             // Loops through all of the aircrafts
             foreach (KeyValuePair<string, int> kvp in AircraftKVPs)
             {
-                int planeAfterburnerValue = kvp.Value * (int)multiplier; // Maybe get rid of the castings later on, use floats only?
+                //int planeAfterburnerValue = kvp.Value * (int)multiplier; // Maybe get rid of the castings later on, use floats only?
 
                 // Calculates all the necessary values for the curve optimisation
-                float hardDententValuePercentage = (float)hardDetentValue / (float)totalValue;
-                float afterburnerTurnOnPercentage = (float)planeAfterburnerValue / (float)totalValue;
+                float hardDententValuePercentage = (float)_idleDetentValue / (float)totalValue;
+                float afterburnerTurnOnPercentage = kvp.Value / (float)totalValue;
                 float modifyCurveBy = afterburnerTurnOnPercentage - detentPercentage;
 
                 // Calculate the initial values
@@ -193,7 +287,7 @@ namespace DCS_AfterburnerDetentCalculator
                 userCurve[0] = 0f;
                 if (setHardDetentValue)
                 {
-                    userCurve[1] = hardDententValuePercentage / 2.5f;
+                    userCurve[1] = hardDententValuePercentage / 2.2f;
                 }
 
                 // How many times the means of the curve values will be calculated
@@ -238,7 +332,7 @@ namespace DCS_AfterburnerDetentCalculator
                     }
                 }
 
-                if (ReverseThrottle)
+                if (_reversed)
                 {
                     userCurve = RevertCurve(userCurve);
                 }
