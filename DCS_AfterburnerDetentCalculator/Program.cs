@@ -120,7 +120,7 @@ namespace DCS_AfterburnerDetentCalculator
             {
                 bool canBreak = false;
 
-                jr.ReadThrottleAxises(jr.Sticks[selectedJoystick]);
+                jr.ReadThrottleAxises(jr.Sticks[selectedJoystick-1]);
                 Console.Write("\r[0 X] {0}     |[1 Y]{1}     |[2 Z]{2}     [3 rX] {3}     |[4 rY]{4}     |[5 rZ]{5}     ",
                     jr.monitorArray[0], jr.monitorArray[1], jr.monitorArray[2], jr.monitorArray[3], jr.monitorArray[4], jr.monitorArray[5]);
 
@@ -156,7 +156,7 @@ namespace DCS_AfterburnerDetentCalculator
                 if (Console.ReadKey().Key == ConsoleKey.Spacebar) break;
             }
 
-            afterburnerDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
+            afterburnerDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick-1], axisToCalibrateWith);
 
             Console.WriteLine("Done setting afterburner detent value at: " + afterburnerDetentValue + "\n");
 
@@ -170,7 +170,7 @@ namespace DCS_AfterburnerDetentCalculator
                     if (Console.ReadKey().Key == ConsoleKey.Spacebar) break;
                 }
 
-                idleDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick], axisToCalibrateWith);
+                idleDetentValue = jr.ReadSpecificAxis(jr.Sticks[selectedJoystick-1], axisToCalibrateWith);
 
                 Console.WriteLine("Done setting idle value at: " + idleDetentValue + "\n");
             }
