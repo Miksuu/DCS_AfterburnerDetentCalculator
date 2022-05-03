@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SlimDX.DirectInput;
 
@@ -312,6 +312,7 @@ namespace DCS_AfterburnerDetentCalculator
             AircraftKVPs.Add("F-14", 13110); // Could tune this up to 13250, but the afterburner stays on after putting the throttle back to soft detent for some reason
             AircraftKVPs.Add("F-5E", 13360);
             AircraftKVPs.Add("AJS37", 13400);
+            AircraftKVPs.Add("JF-17", 14840);
         }
 
         public void Calculations(bool _reversed, int _detentValue, int _idleDetentValue, bool _setIdleDetentValue)
